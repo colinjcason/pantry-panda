@@ -82,8 +82,13 @@ function App() {
   return (
     <div className="app">
       <img src={logo} alt='panda eating noodles'/>
+
+      {auth ? 
       <button onClick={signInWithGoogle} id='sign-in-button'>Sign In</button>
+      :
       <button onClick={logout} id='sign-in-button'>Sign Out</button>
+      }
+      
       <h5>A friend to help with your shopping checklist!
         <br/>
         Click your items to mark them off your list!
@@ -100,7 +105,7 @@ function App() {
 
       <div className="button-container">
         <button onClick={addItem}>Add to List</button>
-        <button onClick={clearList}>Clear List</button>
+        {/* <button onClick={clearList}>Clear List</button> */}
       </div>
 
       <ul className="shopping-list">

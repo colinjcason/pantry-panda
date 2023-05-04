@@ -12,7 +12,7 @@ export const ListItem = ({ strikethrough, toggle, name, deleteItem, id }) => {
       onClick={() => toggle(id)}
     >
       {name}
-      <button onClick={() => deleteItem(id)}>Delete</button>
+      {/* <button onClick={() => deleteItem(id)}>Delete</button> */}
     </div>
   )
 }
