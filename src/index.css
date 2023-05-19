@@ -41,12 +41,17 @@ input {
   font-size: 20px;
 }
 
-.button-container {
+button {
+  cursor: pointer;
+}
+
+.form-container {
   display: flex;
+  flex-direction: column;
   gap: 10px;
 }
 
-.button-container button {
+.form-container button {
   color: #FDFDFD;
   background-color: #AC485A;
   font-family: 'Rubik', sans-serif;
@@ -55,22 +60,18 @@ input {
   padding: 15px;
   font-size: 20px;
   border-radius: 8px;
-  width: 0;
 }
 
-.button-container button:hover {
+.form-container button:hover {
   background-color: #432000;
-  cursor: pointer;
 }
 
-#sign-in-button {
+#auth-button {
   font-family: 'Rubik', sans-serif;
   border: 0;
   border-radius: 8px;
   padding: 8px;
 }
-
-
 
 ul {
   display: flex;

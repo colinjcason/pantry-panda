@@ -10,6 +10,7 @@ function App() {
   const [listItems, setListItems] = useState([])
   const [newItem, setNewItem] = useState('')
   const [inputField, setInputField] = useState('')
+  const [userAuth, setCurrentAuth] = useState(false)
 
   const listItemsRef = collection(db, 'shopping-list')
 
@@ -23,14 +24,18 @@ function App() {
     } 
    }, [listItemsRef])
 
-  useEffect(() => {
-   getItemsList()    
-  }, [getItemsList])
+  // useEffect(() => {
+  //  getItemsList()
+  //  console.log('render')    
+  // }, [])
 
   
   const signInWithGoogle = async () => {
     try {
       await signInWithPopup(auth, googleProvider)
+      setCurrentAuth(true)
+      getItemsList()
+      console.log(auth.currentUser)
     } catch (error) {
       console.log(error)
     }
@@ -38,7 +43,11 @@ function App() {
 
   const logout = async () => {
     try {
-      await signOut(auth);
+      await signOut(auth).then(() => {
+        console.log(`${auth.currentUser} signed out`)
+        console.log(auth)
+      })
+      setCurrentAuth(false)
     } catch (err) {
       console.error(err);
     }
@@ -56,17 +65,25 @@ function App() {
   }
 
   // Adding item to shopping list
-  const addItem = async () => {
-    try {
-      await addDoc(listItemsRef, {
-        name: newItem, 
-        strikethrough: false,
-        userId: auth?.currentUser?.uid
-      })      
-      getItemsList()
+  const addItem = async (e) => {
+    e.preventDefault()
+    if (userAuth) {
+      // try {
+      //   await addDoc(listItemsRef, {
+      //     name: newItem, 
+      //     strikethrough: false,
+      //     userId: auth?.currentUser?.uid
+      //   })      
+      //   // getItemsList()
+      //   // setInputField('')
+      // } catch (error) {
+      //   console.log(error)
+      // }
+      console.log('item added')
       setInputField('')
-    } catch (error) {
-      console.log(error)
+    } else {
+      alert('Please sign in to add items!')
+      setInputField('')
     }
   }
 
@@ -79,14 +96,19 @@ function App() {
     setListItems([])
   }
 
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log('item added')
+  }
+
   return (
     <div className="app">
       <img src={logo} alt='panda eating noodles'/>
 
-      {auth ? 
-      <button onClick={signInWithGoogle} id='sign-in-button'>Sign In</button>
+      {userAuth ? 
+      <button onClick={logout} id='auth-button'>Sign Out</button>
       :
-      <button onClick={logout} id='sign-in-button'>Sign Out</button>
+      <button onClick={signInWithGoogle} id='auth-button'>Sign In</button>
       }
       
       <h5>A friend to help with your shopping checklist!
@@ -94,21 +116,19 @@ function App() {
         Click your items to mark them off your list!
       </h5>
 
-      <input 
-        type='text' 
-        id='input-field' 
-        placeholder="Bread"
-        name='inputField'
-        value={inputField}
-        onChange={handleChange}
-       />
+      <form className="form-container" onSubmit={addItem}>
+        <input 
+            type='text' 
+            id='input-field' 
+            placeholder="Bread"
+            name='inputField'
+            value={inputField}
+            onChange={handleChange}
+          />
+        <button onClick={addItem} type='submit'>Add to List</button>
+      </form>
 
-      <div className="button-container">
-        <button onClick={addItem}>Add to List</button>
-        {/* <button onClick={clearList}>Clear List</button> */}
-      </div>
-
-      <ul className="shopping-list">
+      {userAuth ? <ul className="shopping-list">
         {listItems.map(item => (
           <ListItem 
             toggle={toggle} 
@@ -119,7 +139,9 @@ function App() {
             deleteItem={deleteItem}
           />
         ))}
-      </ul>
+      </ul> : 
+
+      <p>Please sign in to create a list!</p>}
     </div>
   );
 }
